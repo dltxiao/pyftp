@@ -38,7 +38,7 @@ class MYFTP:
             ftp.cwd(self.remotedir)
         except Exception:
             deal_error('切换目录失败')
-    
+    '''
     def is_same_size(self, localfile, remotefile):  
         try:  
             remotefile_size = self.ftp.size(remotefile)  
@@ -53,13 +53,13 @@ class MYFTP:
             return 1  
         else:  
             return 0  
-    
+    '''
     def download_file(self, localfile, remotefile):  
-        if self.is_same_size(localfile, remotefile):  
-            debug_print('%s 文件大小相同，无需下载' %localfile)  
-            return  
-        else:  
-            debug_print('>>>>>>>>>>>>下载文件 %s ... ...' %localfile)  
+#        if self.is_same_size(localfile, remotefile):  
+#            debug_print('%s 文件大小相同，无需下载' %localfile)  
+#            return  
+#        else:  
+        debug_print('>>>>>>>>>>>>下载文件 %s ... ...' %localfile)  
         #return  
         file_handler = open(localfile, 'wb')  
         self.ftp.retrbinary('RETR %s'%(remotefile), file_handler.write)  
@@ -85,8 +85,11 @@ class MYFTP:
             local = os.path.join(localdir, filename)  
             if filetype == 'd':  
                 self.download_files(local, filename)  
-            elif filetype == '-':  
-                self.download_file(local, filename)  
+            elif filetype == '-':
+                try:  
+                    self.download_file(local, filename)  
+                except ftplib.error_temp as ftperror:
+                    print ftperror.reason
         self.ftp.cwd('..')  
         debug_print('返回上层目录 %s' %self.ftp.pwd())  
     def upload_file(self, localfile, remotefile):  
